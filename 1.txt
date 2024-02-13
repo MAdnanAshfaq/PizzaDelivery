@@ -1,0 +1,108 @@
+  document.addEventListener('DOMContentLoaded', function () {
+    const addToCartButtons = document.querySelectorAll('.bg-orange-500');
+    const cartCounter = document.getElementById('cartCounter');
+    const cartButton = document.getElementById('cartButton');
+    const cartPopup = document.getElementById('cartPopup');
+    const cartItems = document.querySelector('.cartItems');
+    const checkoutButton = document.querySelector('.cart-button#checkout-button');
+    const clearCartButton = document.querySelector('#clear-cart-button');
+    let cartCount = 0;
+    
+    addToCartButtons.forEach(addToCartButton => {
+      addAddToCartClickListener(addToCartButton);
+    });
+  
+    function addAddToCartClickListener(button) {
+      button.addEventListener('click', (event) => {
+        if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Add to Cart') {
+          // Clone the item and add it to the cart popup
+          const item = button.parentElement.parentElement;
+          const itemClone = item.cloneNode(true);
+          cartItems.appendChild(itemClone);
+  
+          const removeButton = createRemoveButton(); // Create a "Remove" button
+          itemClone.appendChild(removeButton);
+  
+          addRemoveClickListener(removeButton); // Add a click event to the "Remove" button
+  
+          cartCount++;
+          cartCounter.innerText = cartCount;
+          console.log('running');
+          updateCartButtonsVisibility();
+          event.stopPropagation();
+        }
+      });
+    }
+    function updateCartButtonsVisibility() {
+    const checkoutButton = document.getElementById('checkout-button');
+    const clearCartButton = document.getElementById('clear-cart-button');
+
+    if (cartCount > 0) {
+      checkoutButton.style.display = 'block'; // Show the checkout button
+      clearCartButton.style.display = 'block'; // Show the clear cart button
+    } else {
+      checkoutButton.style.display = 'none'; // Hide the checkout button
+      clearCartButton.style.display = 'none'; // Hide the clear cart button
+    }
+  }
+  
+
+    function createRemoveButton() {
+      const removeButton = document.createElement('button');
+      removeButton.textContent = 'Remove';
+      removeButton.classList.add('bg-red-500', 'hover:bg-orange-400', 'text-white', 'px-4', 'py-2', 'rounded-full', 'font-bold');
+      return removeButton;
+    }
+  
+    function addRemoveClickListener(removeButton) {
+      removeButton.addEventListener('click', () => {
+        const item = removeButton.parentElement;
+        cartItems.removeChild(item);
+        cartCount--;
+        cartCounter.innerText = cartCount;
+      });
+    }
+    function hidePopup() {
+      if (cartCount <= 0) {
+        hideCartPopup();
+    } 
+    else {
+    showCartPopup();
+    }
+}
+
+    cartButton.addEventListener('click', function (event) {
+      event.preventDefault();
+  
+      // Toggle the cartPopup visibility
+      if (cartPopup.style.display === 'block'|| cartCount===0) {
+        hideCartPopup();
+      } else {
+        showCartPopup();
+      }
+    });
+  
+    function showCartPopup() {
+      cartPopup.style.display = 'block';
+    }
+  
+    function hideCartPopup() {
+      cartPopup.style.display = 'none';
+    }
+  
+    checkoutButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      // Add logic to handle the checkout process here
+      // You can reset cartCount to 0 if needed
+    });
+  
+    clearCartButton.addEventListener('click', function () {
+      cartItems.innerHTML = ''; // Clear all items from the cart
+      cartCount = 0;
+      cartCounter.innerText = cartCount;
+    });
+  
+    cartPopup.addEventListener('click', function (event) {
+      event.stopPropagation();
+    });
+  });
